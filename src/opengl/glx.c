@@ -32,6 +32,18 @@ along with libstrangle.  If not, see <http://www.gnu.org/licenses/>.
 #include <GL/gl.h>
 #include <GL/glxtokens.h>
 
+
+int black = 0;
+void blackframe(){
+    if (black%2==0){
+        // Set frame to black
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f );
+        glClear(GL_COLOR_BUFFER_BIT);
+        black = 0; // Next frame will not be hacked
+		}
+		black++;
+}
+
 void* strangle_requireGlxFunction( const char* name ) {
 	static void *(*real_glXGetProcAddress)( const unsigned char* );
 	static void *(*real_glXGetProcAddressARB)( const unsigned char* );
@@ -75,6 +87,7 @@ void glXSwapBuffers( void* dpy, void* drawable ) {
 		glFinish();
 	}
 
+	blackframe();
 	// The buffer swap is called before the wait in hope that it will reduce perceived input lag
 	realFunction( dpy, drawable );
 	limiter( config );
